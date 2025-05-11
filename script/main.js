@@ -1,230 +1,177 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Мобильное меню
-    const hamburger = document.querySelector('.hamburger-menu');
-    const nav = document.querySelector('nav ul');
-    
-    hamburger.addEventListener('click', function() {
-        nav.classList.toggle('active');
-        hamburger.classList.toggle('active');
-    });
-    
-    // Плавная прокрутка для якорей
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            e.preventDefault();
-            document.querySelector(this.getAttribute('href')).scrollIntoView({
-                behavior: 'smooth'
-            });
-        });
-    });
-    
-    // Анимация появления элементов при скролле
-    const animateOnScroll = function() {
-        const elements = document.querySelectorAll('.slide-up');
-        
-        elements.forEach(element => {
-            const elementPosition = element.getBoundingClientRect().top;
-            const screenPosition = window.innerHeight / 1.2;
-            
-            if (elementPosition < screenPosition) {
-                element.classList.add('animated');
-            }
-        });
-    };
-    
-    window.addEventListener('scroll', animateOnScroll);
-    animateOnScroll(); // Инициализация при загрузке
-    
-    // Загрузка превью питомцев на главную
-    if (document.getElementById('home-pets')) {
-        loadPetPreviews();
-    }
-});
+    const track = document.querySelector('.testimonials-track');
+    const cards = document.querySelectorAll('.testimonial-card');
+    const dotsContainer = document.querySelector('.testimonials-dots');
+    const prevBtn = document.querySelector('.prev-btn');
+    const nextBtn = document.querySelector('.next-btn');
+    let currentIndex = 0;
+    let isAutoPlaying = true;
+    let autoPlayInterval;
+    let isAnimating = false;
 
-// Функция для загрузки превью питомцев
-function loadPetPreviews() {
-    const pets = [
-        {
-            id: 1,
-            name: "Барсик",
-            species: "Кот",
-            age: 2,
-            gender: "Мальчик",
-            breed: "Дворовый",
-            description: "Барсик — это очаровательный и игривый кот, который стал настоящей звездой нашего приюта. Он обожает внимание людей и с удовольствием идет на контакт, легко находит общий язык как с детьми, так и со взрослыми. Его ласка и игривость принесут радость в ваш дом.",
-            image: "../images/cat1.jpg",
-            adopted: false
-        },
-    {
-        id: 2,
-        name: "Мурка",
-        species: "Кошка",
-        age: 3,
-        gender: "Девочка",
-        breed: "Сиамская",
-        description: "Мурка — спокойная и умная сиамская кошка, которая отлично составит компанию спокойному человеку, любящему уединение. Она предпочитает тихие уголки для отдыха и обожает мягкие подушки. Её ласка и доброта создадут атмосферу уюта в вашем доме.",
-        image: "../images/cat2.jpg",
-        adopted: false
-    },
-    {
-        id: 3,
-        name: "Ролик",
-        species: "Собака",
-        age: 4,
-        gender: "мальчик",
-        breed: "Лабрадор",
-        description: "Ролик — дружелюбный и игривый лабрадор. Он отлично подходит для охоты и станет верным спутником для спортивных людей. Этот энергичный пес обожает играть на свежем воздухе и легко находит общий язык с детьми, принося радость в ваш дом.",
-        image: "../images/dog1.jpg",
-        adopted: false
+    cards.forEach(() => {
+        const dot = document.createElement('div');
+        dot.className = 'dot';
+        dotsContainer.appendChild(dot);
+    });
+
+    const dots = document.querySelectorAll('.dot');
+    
+    function updateActiveStates(index) {
+        requestAnimationFrame(() => {
+            cards.forEach((card, i) => {
+                card.classList.remove('active');
+            });
+            cards[index].classList.add('active');
+            
+            dots.forEach((dot, i) => {
+                dot.classList.remove('active');
+            });
+            dots[index].classList.add('active');
+        });
     }
-    ];
-    
-    const petsContainer = document.getElementById('home-pets');
-    
-    pets.forEach(pet => {
+
+    function updateSlider(index, isAuto = false) {
+        if (isAnimating && isAuto) return;
+        isAnimating = true;
+
+        const offset = -index * 100;
+        track.style.transform = `translateX(${offset}%)`;
+        currentIndex = index;
+        updateActiveStates(index);
+
+        setTimeout(() => {
+            isAnimating = false;
+        }, 500);
+    }
+
+    function nextSlide(isAuto = false) {
+        if (isAnimating && isAuto) return;
+        const nextIndex = (currentIndex + 1) % cards.length;
+        updateSlider(nextIndex, isAuto);
+    }
+
+    function prevSlide() {
+        if (isAnimating) return;
+        const prevIndex = (currentIndex - 1 + cards.length) % cards.length;
+        updateSlider(prevIndex);
+    }
+
+    function startAutoPlay() {
+        if (autoPlayInterval) clearInterval(autoPlayInterval);
+        autoPlayInterval = setInterval(() => nextSlide(true), 3000);
+        isAutoPlaying = true;
+    }
+
+    function stopAutoPlay() {
+        if (autoPlayInterval) {
+            clearInterval(autoPlayInterval);
+            isAutoPlaying = false;
+        }
+    }
+
+    function handleInteraction() {
+        stopAutoPlay();
+        setTimeout(() => {
+            if (!isAutoPlaying) {
+                startAutoPlay();
+            }
+        }, 5000);
+    }
+
+    prevBtn.addEventListener('click', () => {
+        prevSlide();
+        handleInteraction();
+    });
+
+    nextBtn.addEventListener('click', () => {
+        nextSlide();
+        handleInteraction();
+    });
+
+    dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+            if (isAnimating) return;
+            updateSlider(index);
+            handleInteraction();
+        });
+    });
+
+    track.addEventListener('transitionend', () => {
+        isAnimating = false;
+    });
+
+    track.addEventListener('mouseenter', stopAutoPlay);
+    track.addEventListener('mouseleave', startAutoPlay);
+    track.addEventListener('touchstart', stopAutoPlay);
+    track.addEventListener('touchend', () => {
+        setTimeout(startAutoPlay, 5000);
+    });
+
+    updateActiveStates(0);
+    cards[0].classList.add('active');
+    startAutoPlay();
+
+    function getRandomPets(pets, count) {
+        const shuffled = [...pets].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, count);
+    }
+
+    function createPetCard(pet) {
         const petCard = document.createElement('div');
-        petCard.className = 'pet-card';
+        petCard.className = `pet-card ${pet.adopted ? 'adopted' : ''}`;
+        
         petCard.innerHTML = `
             <div class="pet-image">
                 <img src="${pet.image}" alt="${pet.name}">
+                ${pet.adopted ? '<span class="adopted-badge">Пристроен</span>' : ''}
             </div>
             <div class="pet-info">
                 <h3>${pet.name}</h3>
-                <p><strong>Возраст:</strong> ${pet.age}</p>
+                <p><strong>Вид:</strong> ${getSpeciesName(pet.species)}</p>
+                <p><strong>Возраст:</strong> ${pet.age} ${getAgeWord(pet.age)}</p>
+                <p><strong>Пол:</strong> ${pet.gender === 'male' ? 'Мальчик' : 'Девочка'}</p>
                 <p><strong>Порода:</strong> ${pet.breed}</p>
-                <a href="shelter.html#pet-${pet.id}" class="see-all-button">Подробнее</a>
+                <p class="pet-description">${pet.description.slice(0, 100)}...</p>
+                ${!pet.adopted ? `<button class="adopt-btn" data-id="${pet.id}">Узнать о питомце</button>` : ''}
             </div>
         `;
-        petsContainer.appendChild(petCard);
-    });
-}
-document.addEventListener('DOMContentLoaded', function() {
-    // Мобильное меню
-    const hamburger = document.querySelector('.hamburger-menu');
-    const nav = document.querySelector('nav ul');
-    
-    hamburger.addEventListener('click', function() {
-        this.classList.toggle('active');
-        nav.classList.toggle('active');
-    });
-
-    // Плавная прокрутка для якорей
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            e.preventDefault();
-            document.querySelector(this.getAttribute('href')).scrollIntoView({
-                behavior: 'smooth'
-            });
-        });
-    });
-
-    // Фиксированная шапка при прокрутке
-    window.addEventListener('scroll', function() {
-        const header = document.querySelector('header');
-        header.classList.toggle('sticky', window.scrollY > 0);
-    });
-
-    // Модальное окно
-    const modal = document.createElement('div');
-    modal.className = 'modal';
-    modal.innerHTML = `
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <div class="modal-body"></div>
-        </div>
-    `;
-    document.body.appendChild(modal);
-
-    // Закрытие модального окна
-    modal.querySelector('.close-modal').addEventListener('click', function() {
-        modal.style.display = 'none';
-    });
-
-    window.closeModal = function() {
-        modal.style.display = 'none';
-    };
-
-    window.openModal = function(content) {
-        modal.querySelector('.modal-body').innerHTML = content;
-        modal.style.display = 'flex';
-    };
-
-    // Закрытие при клике вне окна
-    window.addEventListener('click', function(e) {
-        if (e.target === modal) {
-            modal.style.display = 'none';
-        }
-    });
-});
-// Анимация счетчиков статистики
-function animateCounters() {
-    const counters = document.querySelectorAll('.stat-number');
-    const speed = 200;
-    
-    counters.forEach(counter => {
-        const target = +counter.getAttribute('data-count');
-        const count = +counter.innerText;
-        const increment = target / speed;
-        
-        if (count < target) {
-            counter.innerText = Math.ceil(count + increment);
-            setTimeout(animateCounters, 1);
-        } else {
-            counter.innerText = target;
-        }
-    });
-}
-
-// Запуск анимации при скролле до секции
-function startCountersWhenVisible() {
-    const statsSection = document.querySelector('.about-hero');
-    if (statsSection) {
-        const sectionPosition = statsSection.getBoundingClientRect().top;
-        const screenPosition = window.innerHeight / 1.3;
-    
-    
-    if (sectionPosition < screenPosition) {
-        animateCounters();
-        window.removeEventListener('scroll', startCountersWhenVisible);
+        return petCard;
     }
-} else {
-    console.error("Элемент с классом 'about-hero' не найден.");
-}
-}
 
-// Инициализация
-document.addEventListener('DOMContentLoaded', function() {
-    // Анимация таймлайна
-    const timelineItems = document.querySelectorAll('.timeline-item');
+    function getSpeciesName(species) {
+        const speciesNames = {
+            'dog': 'Собака',
+            'cat': 'Кошка',
+            'other': 'Другое'
+        };
+        return speciesNames[species] || species;
+    }
     
-    function checkTimeline() {
-        timelineItems.forEach(item => {
-            const itemPosition = item.getBoundingClientRect().top;
-            const screenPosition = window.innerHeight / 1.2;
+    function getAgeWord(age) {
+        const lastDigit = age % 10;
+        if (age >= 11 && age <= 14) return 'лет';
+        if (lastDigit === 1) return 'год';
+        if (lastDigit >= 2 && lastDigit <= 4) return 'года';
+        return 'лет';
+    }
+
+    const featuredPetsContainer = document.getElementById('featured-pets');
+    if (featuredPetsContainer && typeof petsData !== 'undefined') {
+        const featuredPets = getRandomPets(petsData.filter(pet => !pet.adopted), 3);
+        featuredPets.forEach(pet => {
+            featuredPetsContainer.appendChild(createPetCard(pet));
+        });
+    }
+
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('adopt-btn')) {
+            const petId = parseInt(e.target.dataset.id);
+            const pet = petsData.find(p => p.id === petId);
             
-            if (itemPosition < screenPosition) {
-                item.classList.add('animated');
+            if (pet) {
+                window.location.href = `shelter.html#pet-${petId}`;
             }
-        });
-    }
-    
-    window.addEventListener('scroll', checkTimeline);
-    checkTimeline(); // Проверить при загрузке
-    
-    // Анимация счетчиков
-    window.addEventListener('scroll', startCountersWhenVisible);
-    startCountersWhenVisible(); // Проверить при загрузке
-    
-    // Плавные переходы между секциями
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href');
-            if (targetId !== '#') {
-                document.querySelector(targetId).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            }
-        });
+        }
     });
-});
+}); 

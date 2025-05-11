@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
             gender: "male",
             breed: "Дворовый",
             description: "Барсик — это очаровательный и игривый кот, который стал настоящей звездой нашего приюта. Он обожает внимание людей и с удовольствием идет на контакт, легко находит общий язык как с детьми, так и со взрослыми. Его ласка и игривость принесут радость в ваш дом.",
-            image: "../images/cat1.jpg",
+            image: "assets/cat2.jpg",
             adopted: false
         },
     {
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
         gender: "female",
         breed: "Сиамская",
         description: "Мурка — спокойная и умная сиамская кошка, которая отлично составит компанию спокойному человеку, любящему уединение. Она предпочитает тихие уголки для отдыха и обожает мягкие подушки. Её ласка и доброта создадут атмосферу уюта в вашем доме.",
-        image: "../images/cat2.jpg",
+        image: "assets/cat1.png",
         adopted: false
     },
     {
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
         gender: "male",
         breed: "Лабрадор",
         description: "Ролик — дружелюбный и игривый лабрадор. Он отлично подходит для охоты и станет верным спутником для спортивных людей. Этот энергичный пес обожает играть на свежем воздухе и легко находит общий язык с детьми, принося радость в ваш дом.",
-        image: "../images/dog1.jpg",
+        image: "assets/dog1.jpg",
         adopted: false
     },
     {
