@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/animations.css">
+    <title>О приюте</title>
+</head>
+<body>
+    <header class="animated-header">
+        <div class="logo">
+            <img src="../images/logo1.png" alt="Paws & Care">
+            <h1>Paws & Care</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="about.html">О нас</a></li>
+                <li><a href="services.html">Услуги</a></li>
+                <li><a href="shelter.html">Наши питомцы</a></li>
+                <li><a href="contacts.html">Контакты</a></li>
+            </ul>
+        </nav>
+        <div class="hamburger-menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </header>
+
+    <main class="shelter-page">
+        <div class="filter-section">
+            <h2>Найдите своего друга</h2>
+            
+            <div class="filter-controls">
+                <div class="search-box">
+                    <input type="text" id="pet-search" placeholder="Поиск по имени...">
+                    <button id="search-btn"><i class="fas fa-search"></i></button>
+                </div>
+                
+                <select id="species-filter">
+                    <option value="all">Все виды</option>
+                    <option value="dog">Собаки</option>
+                    <option value="cat">Кошки</option>
+                    <option value="other">Другие</option>
+                </select>
+                
+                <select id="age-filter">
+                    <option value="all">Любой возраст</option>
+                    <option value="young">До 1 года</option>
+                    <option value="adult">1-5 лет</option>
+                    <option value="senior">Старше 5 лет</option>
+                </select>
+                
+                <select id="gender-filter">
+                    <option value="all">Любой пол</option>
+                    <option value="male">Мальчик</option>
+                    <option value="female">Девочка</option>
+                </select>
+                
+                <button id="reset-filters">Сбросить фильтры</button>
+            </div>
+        </div>
+        
+        <div class="sort-options">
+            <span>Сортировать:</span>
+            <button class="sort-btn" data-sort="name-asc">По имени (А-Я)</button>
+            <button class="sort-btn" data-sort="name-desc">По имени (Я-А)</button>
+            <button class="sort-btn" data-sort="age-asc">По возрасту (младшие)</button>
+            <button class="sort-btn" data-sort="age-desc">По возрасту (старшие)</button>
+        </div>
+        
+        <div class="pets-container" id="pets-container">
+        </div>
+        
+        <div class="pagination">
+            <button id="prev-page">Назад</button>
+            <span id="page-info">Страница 1 из 3</span>
+            <button id="next-page">Вперед</button>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Paws & Care</h3>
+                <p>Ветеринарная клиника и приют для животных. Профессиональная помощь и забота с 2010 года.</p>
+            </div>
+            <div class="footer-column">
+                <h3>Контакты</h3>
+                <p><i class="fas fa-map-marker-alt"></i> г. Москва, ул. Добрых Зверей, 15</p>
+                <p><i class="fas fa-phone"></i> +7 (800) 123-45-67</p>
+                <p><i class="fas fa-envelope"></i> info@pawsandcare.ru</p>
+            </div>
+            <div class="footer-column">
+                <h3>Часы работы</h3>
+                <p>Клиника: Пн-Пт 9:00-21:00</p>
+                <p>Приют: Ежедневно 10:00-19:00</p>
+                <p>Экстренная помощь: 24/7</p>
+            </div>
+            <div class="footer-column">
+                <h3>Подписаться</h3>
+                <div class="social-links">
+                    <a href="#"><img src="../images/vk-logo.png" alt="VK" style="width: 24px; height: 24px;"></a>
+                    <a href="#"><img src="../images/tg-logo.png" alt="TG" style="width: 24px; height: 24px;"></i></a>
+                    <a href="#"><img src="../images/inst-logo.png" alt="IN" style="width: 24px; height: 24px;"></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>2025 Paws & Care. Все права защищены.</p>
+        </div>
+    </footer>
+    <div id="petModal" class="modal">
+        <div class="modal-content">
+            <h2 id="petName"></h2>
+            <p>Мы свяжемся с вами для уточнения деталей!</p>
+            <input type="text" id="phoneNumber" placeholder="Введите номер телефона (+375XXXXXXXXX)" />
+            <button onclick="submitForm()">Отправить</button>
+            <button onclick="closeModal()">Закрыть</button>
+        </div>
+    </div>
+    <script> function showPetModal(pet) {
+        // alert(`Вы выбрали: ${pet.name}\nМы свяжемся с вами для уточнения деталей!`);
+        document.getElementById('petName').innerText = `Вы выбрали: ${pet.name}`;
+        document.getElementById('petModal').style.display = 'flex';
+    }
+    function closeModal() {
+        document.getElementById('petModal').style.display = 'none';
+    }
+
+    function submitForm() {
+        const phoneNumber = document.getElementById('phoneNumber').value;
+        const phoneRegex = /^\+375\d{9}$/; 
+        if (!phoneNumber) {
+            alert("Пожалуйста, введите номер телефона.");
+        } else if (!phoneRegex.test(phoneNumber)) {
+            alert("Номер телефона должен быть в формате +375XXXXXXXXX.");
+        } else {
+            alert(`${document.getElementById('petName').innerText}\nВаш номер: ${phoneNumber}\nМы свяжемся с вами для уточнения деталей!`);
+            closeModal(); 
+        }
+    }</script>
+    <script src="../script/shelter.js"></script>
+</body>
+</html>
