@@ -114,6 +114,157 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeTeamAnimations();
     initializeButtonAnimations();
     animateOnScroll();
+
+    // Данные о питомцах, ищущих дом
+    const featuredPets = [
+        {
+            name: 'Барсик',
+            image: '../assets/cat1.jpg',
+            description: 'Ласковый котик, 2 года',
+            type: 'Кот'
+        },
+        {
+            name: 'Рекс',
+            image: '../assets/dog2.jpg',
+            description: 'Активный и дружелюбный, 1.5 года',
+            type: 'Собака'
+        },
+        {
+            name: 'Мурка',
+            image: '../assets/cat2.jpg',
+            description: 'Спокойная кошечка, 3 года',
+            type: 'Кошка'
+        },
+        {
+            name: 'Шарик',
+            image: '../assets/dog3.jpg',
+            description: 'Умный и послушный, 2 года',
+            type: 'Собака'
+        }
+    ];
+
+    // Функция для отображения питомцев
+    function displayFeaturedPets() {
+        const petsGrid = document.getElementById('featured-pets');
+        if (!petsGrid) return;
+
+        petsGrid.innerHTML = featuredPets.map(pet => `
+            <div class="pet-card animate-on-scroll">
+                <div class="pet-image">
+                    <img src="${pet.image}" alt="${pet.name}">
+                </div>
+                <div class="pet-info">
+                    <div class="pet-info-content">
+                        <h3>${pet.name}</h3>
+                        <span class="pet-type">${pet.type}</span>
+                        <p>${pet.description}</p>
+                    </div>
+                    <a href="shelter.html" class="adopt-button">Приютить</a>
+                </div>
+            </div>
+        `).join('');
+
+        // Добавляем стили для карточек питомцев
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = `
+            .pet-card {
+                background: #fff;
+                border-radius: 10px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                overflow: hidden;
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+            }
+
+            .pet-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            }
+
+            .pet-image {
+                height: 200px;
+                overflow: hidden;
+            }
+
+            .pet-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.3s ease;
+            }
+
+            .pet-card:hover .pet-image img {
+                transform: scale(1.05);
+            }
+
+            .pet-info {
+                padding: 1.5rem;
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
+                justify-content: space-between;
+            }
+
+            .pet-info-content {
+                margin-bottom: 1rem;
+            }
+
+            .pet-info h3 {
+                margin: 0 0 0.5rem;
+                color: #333;
+            }
+
+            .pet-type {
+                display: inline-block;
+                padding: 0.3rem 1rem;
+                background: #f0f7ff;
+                color: #0066cc;
+                border-radius: 20px;
+                font-size: 0.9rem;
+                margin-bottom: 1rem;
+            }
+
+            .pet-info p {
+                color: #666;
+                margin-bottom: 1rem;
+            }
+
+            .adopt-button {
+                display: inline-block;
+                padding: 0.5rem 1.5rem;
+                background: #0066cc;
+                color: white;
+                text-decoration: none;
+                border-radius: 25px;
+                transition: background 0.3s ease;
+            }
+
+            .adopt-button:hover {
+                background: #0052a3;
+            }
+
+            .pets-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 2rem;
+                padding: 2rem 0;
+            }
+
+            @media (max-width: 768px) {
+                .pets-grid {
+                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    gap: 1rem;
+                }
+            }
+        `;
+        document.head.appendChild(styleSheet);
+    }
+
+    // Вызываем функцию при загрузке документа
+    displayFeaturedPets();
 });
 
 // Добавляем стили для анимаций
@@ -152,6 +303,11 @@ styleSheet.textContent = `
 
     .team-member.team-hover .member-image img {
         transform: scale(1.05);
+    }
+
+    .team-member.team-hover .social-links {
+        opacity: 1;
+        transform: translateY(0);
     }
 
     .team-member.team-hover .social-links {
